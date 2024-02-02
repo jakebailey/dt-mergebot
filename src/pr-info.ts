@@ -1,10 +1,4 @@
 import { ColumnName, PopularityLevel } from "./basic";
-import { PR_repository_pullRequest,
-         PR_repository_pullRequest_commits_nodes_commit_checkSuites,
-         PR_repository_pullRequest_timelineItems,
-         PR_repository_pullRequest_comments_nodes,
-         PR_repository_pullRequest_commits_nodes_commit_checkSuites_nodes,
-} from "./queries/schema/PR";
 import { getMonthlyDownloadCount } from "./util/npm";
 import { fetchFile as defaultFetchFile } from "./util/fetchFile";
 import { noNullish, someLast, sameUser, authorNotBot, max, abbrOid } from "./util/util";

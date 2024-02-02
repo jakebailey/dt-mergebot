@@ -1,9 +1,8 @@
-import { gql, TypedDocumentNode } from "@apollo/client/core";
 import { client } from "../graphql-client";
-import { GetAllOpenPRsAndCardIDs, GetAllOpenPRsAndCardIDsVariables } from "./schema/GetAllOpenPRsAndCardIDs";
 import { noNullish } from "../util/util";
+import { gql } from "./__generated__";
 
-const getAllOpenPRsAndCardIDsQuery: TypedDocumentNode<GetAllOpenPRsAndCardIDs, GetAllOpenPRsAndCardIDsVariables> = gql`
+const getAllOpenPRsAndCardIDsQuery = gql(`
 query GetAllOpenPRsAndCardIDs($endCursor: String) {
   repository(owner: "DefinitelyTyped", name: "DefinitelyTyped") {
     id
@@ -15,7 +14,7 @@ query GetAllOpenPRsAndCardIDs($endCursor: String) {
       pageInfo { hasNextPage endCursor }
     }
   }
-}`;
+}`);
 
 export async function getAllOpenPRsAndCardIDs() {
     const prs: number[] = [];

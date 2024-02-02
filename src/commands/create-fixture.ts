@@ -4,11 +4,11 @@ import { deriveStateForPR } from "../pr-info";
 import { ApolloQueryResult } from "@apollo/client/core";
 import { writeFileSync, mkdirSync, existsSync } from "fs";
 import { join } from "path";
-import { PR } from "../queries/schema/PR";
 import { fetchFile } from "../util/fetchFile";
 import { getMonthlyDownloadCount } from "../util/npm";
 import { readJsonSync, scrubDiagnosticDetails } from "../util/util";
 import { executePrActions } from "../execute-pr-actions";
+import { PullRequest } from "../queries/__generated__/graphql";
 
 
 export default async function main(directory: string, overwriteInfo: boolean) {
@@ -25,7 +25,7 @@ export default async function main(directory: string, overwriteInfo: boolean) {
     if (overwriteInfo || !existsSync(jsonFixturePath)) {
         writeJsonSync(jsonFixturePath, await getPRInfo(prNumber));
     }
-    const response: ApolloQueryResult<PR> = readJsonSync(jsonFixturePath);
+    const response: ApolloQueryResult<PullRequest> = readJsonSync(jsonFixturePath);
 
     const filesJSONPath = join(fixturePath, "_files.json");
     const filesFetched: {[expr: string]: string | undefined} = {};
@@ -35,7 +35,7 @@ export default async function main(directory: string, overwriteInfo: boolean) {
 
     const shouldOverwrite = (file: string) => overwriteInfo || !existsSync(file);
 
-    const prInfo = response.data.repository?.pullRequest;
+    const prInfo = response.data.repository.pullRequest;
     if (!prInfo) {
         console.error(`Could not get PR info for ${directory}, is the number correct?`);
         return;

@@ -1,12 +1,11 @@
-import { gql, TypedDocumentNode } from "@apollo/client/core";
-import { GetLabels, GetLabelsVariables, GetLabels_repository_labels_nodes } from "./schema/GetLabels";
-import { GetProjectColumns } from "./schema/GetProjectColumns";
 import { client } from "../graphql-client";
 import { noNullish } from "../util/util";
+import { gql } from "./__generated__";
+import { GetLabelsQuery } from "./__generated__/graphql";
 
 export { getLabels, GetProjectColumns };
 
-const GetLabelsQuery: TypedDocumentNode<GetLabels, GetLabelsVariables> = gql`
+const GetLabelsQuery = gql(`
 query GetLabels($endCursor: String) {
   repository(name: "DefinitelyTyped", owner: "DefinitelyTyped") {
     id
@@ -18,10 +17,12 @@ query GetLabels($endCursor: String) {
       pageInfo { hasNextPage endCursor }
     }
   }
-}`;
+}`);
+
+type Labels = NonNullable<NonNullable<NonNullable<GetLabelsQuery["repository"]>["labels"]>["nodes"]>;
 
 async function getLabels() {
-    const labels: GetLabels_repository_labels_nodes[] = [];
+    const labels: Labels[] = [];
     let endCursor: string | undefined | null;
     while (true) {
         const result = await client.query({
@@ -36,7 +37,7 @@ async function getLabels() {
     }
 }
 
-const GetProjectColumns: TypedDocumentNode<GetProjectColumns, unknown> = gql`
+const GetProjectColumns = gql(`
 query GetProjectColumns {
   repository(name:"DefinitelyTyped", owner:"DefinitelyTyped") {
     id
@@ -50,4 +51,4 @@ query GetProjectColumns {
       }
     }
   }
-}`;
+}`);

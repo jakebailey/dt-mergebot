@@ -1,8 +1,7 @@
-import { gql, TypedDocumentNode } from "@apollo/client/core";
 import { client } from "../graphql-client";
-import { GetProjectBoardCards } from "./schema/GetProjectBoardCards";
+import { gql } from "./__generated__";
 
-const GetProjectBoardCardsQuery: TypedDocumentNode<GetProjectBoardCards, never> = gql`
+const GetProjectBoardCardsQuery = gql(`
   query GetProjectBoardCards {
     repository(owner: "DefinitelyTyped", name: "DefinitelyTyped") {
       id
@@ -23,7 +22,7 @@ const GetProjectBoardCardsQuery: TypedDocumentNode<GetProjectBoardCards, never> 
         }
       }
     }
-  }`;
+  }`);
 
 interface CardInfo {
     id: string;

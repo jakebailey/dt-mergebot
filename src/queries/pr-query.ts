@@ -1,8 +1,6 @@
-import { gql, TypedDocumentNode } from "@apollo/client/core";
 import { client } from "../graphql-client";
-import { PR, PRVariables, PR_repository_pullRequest_files_nodes } from "./schema/PR";
-import { PRFiles, PRFilesVariables } from "./schema/PRFiles";
 import { noNullish } from "../util/util";
+import { gql } from "./__generated__";
 
 export const TOO_MANY_FILES = 500;
 
@@ -15,7 +13,7 @@ export const TOO_MANY_FILES = 500;
 // - Now you're good to C&P the query below
 
 /** This is a GraphQL AST tree */
-const GetPRInfoQueryFirst: TypedDocumentNode<PR, PRVariables> = gql`
+const GetPRInfoQueryFirst = gql(`
 query PR($prNumber: Int!) {
     repository(owner: "DefinitelyTyped", name: "DefinitelyTyped") {
       id
@@ -176,7 +174,7 @@ query PR($prNumber: Int!) {
       }
     }
   }
-`;
+`);
 
 export async function getPRInfo(prNumber: number) {
     const info = await getPRInfoFirst(prNumber);
@@ -219,7 +217,7 @@ async function getPRInfoFirst(prNumber: number) {
 }
 
 // Repeat just the file part, since that's all we need here
-const GetPRInfoQueryRest: TypedDocumentNode<PRFiles, PRFilesVariables> = gql`
+const GetPRInfoQueryRest = gql(`
 query PRFiles($prNumber: Int!, $endCursor: String) {
     repository(owner: "DefinitelyTyped", name: "DefinitelyTyped") {
       pullRequest(number: $prNumber) {
@@ -235,7 +233,7 @@ query PRFiles($prNumber: Int!, $endCursor: String) {
       }
     }
   }
-`;
+`);
 
 async function getPRInfoRest(prNumber: number, endCursor: string | null,
                              files: (PR_repository_pullRequest_files_nodes | null) []) {

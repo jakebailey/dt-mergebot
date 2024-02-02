@@ -1,5 +1,4 @@
 import { app, InvocationContext } from "@azure/functions";
-import { gql, MutationOptions } from "@apollo/client/core";
 import type { Discussion, DiscussionWebhook } from "../types/discussions";
 import { canHandleRequest, extractNPMReference } from "../discussions";
 import { createMutation, client } from "../graphql-client";
@@ -8,6 +7,8 @@ import { httpLog, shouldRunRequest } from "../util/verify";
 import { txt } from "../util/util";
 import { getOwnersOfPackage } from "../pr-info";
 import { fetchFile } from "../util/fetchFile";
+import { MutationOptions } from "@apollo/client";
+import { gql } from "../queries/__generated__";
 
 app.http(
     "Discussions-Trigger", {
@@ -100,7 +101,7 @@ async function updateDiscordWithRequest(discussion: Discussion) {
 
 async function updateOrCreateMainComment(discussion: Discussion, message: string) {
     const discussionComments = await getCommentsForDiscussionNumber(discussion.number);
-    const previousComment = discussionComments.find(c => c.author.login === "typescript-bot");
+    const previousComment = discussionComments?.find(c => c?.author?.login === "typescript-bot");
     if (previousComment) {
         await client.mutate(createMutation<any>("updateDiscussionComment" as any, { body: message, commentId: previousComment.id }));
     } else {
@@ -124,7 +125,7 @@ async function addLabel(discussion: Discussion, labelName: string, description?:
 
 async function getLabelByName(name: string) {
     const info = await client.query({
-        query: gql`
+        query: gql(`
           query GetLabel($name: String!) {
             repository(name: "DefinitelyTyped", owner: "DefinitelyTyped") {
               id
@@ -136,18 +137,18 @@ async function getLabelByName(name: string) {
                 }
               }
             }
-          }`,
+          }`),
         variables: { name },
         fetchPolicy: "no-cache",
     });
 
-    const label: { id: string, name: string } | undefined =  info.data.repository.labels.nodes[0];
-    return { repoID: info.data.repository.id, label };
+    const label: { id: string, name: string } | undefined =  info.data.repository?.labels?.nodes?.[0] ?? undefined;
+    return { repoID: info.data.repository?.id, label };
 }
 
 async function getCommentsForDiscussionNumber(number: number) {
     const info = await client.query({
-        query: gql`
+        query: gql(`
           query GetDiscussionComments($discussionNumber: Int!) {
             repository(name: "DefinitelyTyped", owner: "DefinitelyTyped") {
               name
@@ -163,10 +164,10 @@ async function getCommentsForDiscussionNumber(number: number) {
                 }
               }
             }
-          }`,
+          }`),
         variables: { discussionNumber: number },
         fetchPolicy: "no-cache",
     });
 
-    return info.data.repository.discussion.comments.nodes as Array<{ author: { login: string}, body: string, id: string }>;
+    return info.data.repository?.discussion?.comments.nodes;
 }

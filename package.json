@@ -22,11 +22,15 @@
     "@definitelytyped/old-header-parser": "npm:@definitelytyped/header-parser@0.0.178",
     "dayjs": "^1.11.10",
     "fast-json-patch": "^3.1.1",
-    "graphql": "15.8.0",
+    "graphql": "16.8.1",
     "prettyjson": "^1.2.5",
     "yargs": "^17.7.2"
   },
   "devDependencies": {
+    "@graphql-codegen/cli": "5.0.0",
+    "@graphql-codegen/client-preset": "^4.1.0",
+    "@graphql-codegen/typescript": "4.0.1",
+    "@graphql-typed-document-node/core": "^3.2.0",
     "@octokit/graphql-schema": "^14.53.0",
     "@octokit/webhooks-methods": "^4.0.0",
     "@octokit/webhooks-types": "^7.3.1",
@@ -36,7 +40,6 @@
     "@types/yargs": "^17.0.32",
     "@typescript-eslint/eslint-plugin": "^6.20.0",
     "@typescript-eslint/parser": "^6.20.0",
-    "apollo": "^2.34.0",
     "azure-functions-core-tools": "^4.0.5455",
     "eslint": "^8.56.0",
     "eslint-plugin-unicorn": "^50.0.1",
@@ -48,10 +51,6 @@
     "typescript": "^5.3.3"
   },
   "pnpm": {
-    "overrides": {
-      "apollo>graphql": "15.8.0",
-      "apollo-language-server>graphql": "15.8.0"
-    },
     "updateConfig": {
       "ignoreDependencies": [
         "@definitelytyped/header-parser"
@@ -70,7 +69,8 @@
     "start": "func start",
     "deploy": "func azure functionapp publish dtmergebot2",
     "lint": "eslint --report-unused-disable-directives .",
-    "test": "jest"
+    "test": "jest",
+    "codegen": "graphql-codegen --config codegen.ts"
   },
   "jest": {
     "preset": "ts-jest",

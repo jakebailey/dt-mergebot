@@ -1,7 +1,6 @@
 import { LabelName, LabelNames } from "./basic";
 import { MutationOptions } from "@apollo/client/core";
 import * as schema from "@octokit/graphql-schema/schema";
-import { PR_repository_pullRequest } from "./queries/schema/PR";
 import { Actions } from "./compute-pr-actions";
 import { createMutation, client } from "./graphql-client";
 import { getProjectBoardColumns, getLabels } from "./util/cachedQueries";

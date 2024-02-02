@@ -4,7 +4,6 @@ import { join } from "path";
 import { toMatchFile } from "jest-file-snapshot";
 import { process } from "../compute-pr-actions";
 import { deriveStateForPR } from "../pr-info";
-import { PR } from "../queries/schema/PR";
 import { readJsonSync, scrubDiagnosticDetails } from "../util/util";
 import * as cachedQueries from "./cachedQueries.json";
 jest.mock("../util/cachedQueries", () => ({
@@ -12,6 +11,7 @@ jest.mock("../util/cachedQueries", () => ({
     getLabels: jest.fn(() => cachedQueries.getLabels),
 }));
 import { executePrActions } from "../execute-pr-actions";
+import { PullRequest } from "../queries/__generated__/graphql";
 
 expect.extend({ toMatchFile });
 
@@ -31,11 +31,11 @@ async function testFixture(dir: string) {
 
     const JSONString = (value: any) => scrubDiagnosticDetails(JSON.stringify(value, null, "  ") + "\n");
 
-    const response: ApolloQueryResult<PR> = readJsonSync(responsePath);
+    const response: ApolloQueryResult<PullRequest> = readJsonSync(responsePath);
     const files = readJsonSync(filesPath);
     const downloads = readJsonSync(downloadsPath);
 
-    const prInfo = response.data.repository?.pullRequest;
+    const prInfo = response.data.repository.pullRequest;
     if (!prInfo) throw new Error("Should never happen");
 
     const derived = await deriveStateForPR(
